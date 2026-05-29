@@ -23,7 +23,7 @@ async function carregarNoticias() {
     }
 
     container.innerHTML = dados.noticias.map(noticia => `
-      <div class="noticia">
+      <div class="noticia" style="cursor:pointer" onclick="mostrarDetalheNoticia(${noticia.id})">
         <h3>${noticia.titulo}</h3>
         <p>${noticia.descricao}</p>
         <div class="noticia-meta">
@@ -33,6 +33,40 @@ async function carregarNoticias() {
         </div>
       </div>
     `).join('');
+// Exibe o detalhe da notícia ao clicar
+async function mostrarDetalheNoticia(id) {
+  const container = document.getElementById("noticias");
+  const mensagem = document.getElementById("mensagem");
+  container.innerHTML = '<div class="loading">⏳ Carregando detalhe da notícia...</div>';
+  mensagem.innerHTML = '';
+  try {
+    const response = await fetch(`${API_URL}/noticias/${id}`);
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status}`);
+    }
+    const dados = await response.json();
+    if (!dados.noticia) {
+      container.innerHTML = '<div class="error">❌ Notícia não encontrada.</div>';
+      return;
+    }
+    const noticia = dados.noticia;
+    container.innerHTML = `
+      <div class="noticia" style="background:#e9f7ff">
+        <h2>${noticia.titulo}</h2>
+        <p>${noticia.descricao}</p>
+        <div class="noticia-meta">
+          <span class="categoria">${noticia.categoria}</span>
+          <span>📅 ${noticia.data}</span>
+          <span>🆔 ID: ${noticia.id}</span>
+        </div>
+        <button onclick="carregarNoticias()" style="margin-top:20px">⬅️ Voltar para lista</button>
+      </div>
+    `;
+  } catch (erro) {
+    mensagem.innerHTML = `<div class="error">❌ Erro ao carregar detalhe: ${erro.message}</div>`;
+    container.innerHTML = '';
+  }
+}
 
   } catch (erro) {
     console.error('Erro ao carregar notícias:', erro);
