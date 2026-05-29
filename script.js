@@ -34,7 +34,7 @@ async function carregarNoticias() {
       </div>
     `).join('');
 // Exibe o detalhe da notícia ao clicar
-async function mostrarDetalheNoticia(id) {
+window.mostrarDetalheNoticia = async function(id) {
   const container = document.getElementById("noticias");
   const mensagem = document.getElementById("mensagem");
   container.innerHTML = '<div class="loading">⏳ Carregando detalhe da notícia...</div>';
